@@ -13,11 +13,9 @@ import scheduler.framework.core.annotation.QuartzJob;
 @QuartzJob
 public class ReportJob implements Job {
 
-    public final static String JOB_KEY = "reportJob";
-
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         JobDataMap data = jobExecutionContext.getMergedJobDataMap();
-        System.out.println("Download reports...");
+        System.out.println("Name job is " + data.get("name"));
     }
 }

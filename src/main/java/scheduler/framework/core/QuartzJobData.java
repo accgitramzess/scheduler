@@ -10,7 +10,7 @@ import org.quartz.Trigger;
  */
 @Data
 @AllArgsConstructor
-public class QuartzJobContext {
+public class QuartzJobData {
 
     private JobDetail jobDetail;
 

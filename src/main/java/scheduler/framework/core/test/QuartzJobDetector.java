@@ -1,4 +1,4 @@
-package scheduler.framework.core;
+package scheduler.framework.core.test;
 
 import org.quartz.Job;
 import org.springframework.beans.factory.config.BeanDefinition;

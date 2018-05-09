@@ -17,13 +17,13 @@ import java.util.List;
 public class QuartzScheduler {
 
     private SchedulerFactoryBean schedulerFactoryBean;
-    private QuartzJobContextFactory quartzJobContextFactory;
+    private DefaultQuartzJobFactory quartzJobFactory;
 
     @Autowired
     public QuartzScheduler(SchedulerFactoryBean schedulerFactoryBean,
-                           QuartzJobContextFactory quartzJobContextFactory) {
+                           DefaultQuartzJobFactory quartzJobFactory) {
         this.schedulerFactoryBean = schedulerFactoryBean;
-        this.quartzJobContextFactory = quartzJobContextFactory;
+        this.quartzJobFactory = quartzJobFactory;
     }
 
     @PostConstruct
@@ -33,8 +33,8 @@ public class QuartzScheduler {
 
     public void scheduleJobs() throws SchedulerException {
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
-        List<QuartzJobContext> quartzJobContexts = quartzJobContextFactory.getJobsContext();
-        for (QuartzJobContext model : quartzJobContexts) {
+        List<QuartzJobData> quartzJobData = quartzJobFactory.getQuartzJobs();
+        for (QuartzJobData model : quartzJobData) {
             scheduler.scheduleJob(model.getJobDetail(), model.getTrigger());
         }
         scheduler.start();

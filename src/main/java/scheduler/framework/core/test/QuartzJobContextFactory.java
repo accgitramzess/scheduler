@@ -1,25 +1,16 @@
-package scheduler.framework.core;
+package scheduler.framework.core.test;
 
-import org.quartz.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import scheduler.framework.configuration.JobProperties;
-import scheduler.framework.configuration.QuartzProperties;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 
 /**
  * Created by LilG2pac on 30.04.2018.
  */
-@Component
+//@Component
 public class QuartzJobContextFactory {
 
-    private QuartzProperties quartzProperties;
+    /*private QuartzProperties quartzProperties;
 
     private QuartzJobDetector quartzJobDetector = new QuartzJobDetector();
 
@@ -28,7 +19,7 @@ public class QuartzJobContextFactory {
         this.quartzProperties = quartzProperties;
     }
 
-    public List<QuartzJobContext> getJobsContext() {
+    public List<QuartzJobData> getJobsContext() {
 
         Map<String, Class<? extends Job>> jobs = quartzJobDetector.detect("scheduler.framework.job");
 
@@ -40,11 +31,11 @@ public class QuartzJobContextFactory {
                 .collect(Collectors.toList());
     }
 
-    private QuartzJobContext generateJobContext(Class<? extends Job> jobClass, JobProperties job) {
+    private QuartzJobData generateJobContext(Class<? extends Job> jobClass, JobProperties job) {
 
         JobDetail jobDetail = createJobDetail(jobClass, job);
         Trigger trigger = createTrigger(job, jobDetail);
-        QuartzJobContext quartzJobContext = new QuartzJobContext(jobDetail, trigger);
+        QuartzJobData quartzJobContext = new QuartzJobData(jobDetail, trigger);
 
         return quartzJobContext;
     }
@@ -75,5 +66,5 @@ public class QuartzJobContextFactory {
                 .build();
 
         return trigger;
-    }
+    }*/
 }

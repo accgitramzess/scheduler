@@ -2,10 +2,12 @@ package scheduler.framework.configuration;
 
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import scheduler.framework.core.QuartzScheduler;
 
@@ -15,16 +17,8 @@ import java.util.Properties;
 /**
  * Created by LilG2pac on 30.04.2018.
  */
-//@Configuration
-//@EnableConfigurationProperties(QuartzProperties.class)
+@Configuration
 public class SchedulerConfig {
-
-    private QuartzProperties quartzProperties;
-
-    @Autowired
-    public SchedulerConfig(QuartzProperties quartzProperties) {
-        this.quartzProperties = quartzProperties;
-    }
 
     @Bean
     public JobFactory jobFactory(ApplicationContext applicationContext) {
@@ -42,13 +36,16 @@ public class SchedulerConfig {
         factory.setAutoStartup(true);
         factory.setJobFactory(jobFactory);
 
-        Properties properties = new Properties();
-        properties.setProperty("org.quartz.scheduler.instanceName", quartzProperties.getScheduler().getInstanceName());
-        properties.setProperty("org.quartz.scheduler.instanceId", quartzProperties.getScheduler().getInstanceId());
-        properties.setProperty("org.quartz.threadPool.threadCount", quartzProperties.getThreadPool().getThreadCount());
-
-        factory.setQuartzProperties(properties);
+        factory.setQuartzProperties(quartzProperties());
 
         return factory;
+    }
+
+    @Bean
+    public Properties quartzProperties() throws IOException {
+        PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
+        propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
+        propertiesFactoryBean.afterPropertiesSet();
+        return propertiesFactoryBean.getObject();
     }
 }
