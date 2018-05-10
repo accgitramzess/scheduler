@@ -3,9 +3,10 @@ package scheduler.framework.job;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import scheduler.framework.core.annotation.QuartzJob;
+import scheduler.framework.service.ReportService;
 
 /**
  * Created by LilG2pac on 30.04.2018.
@@ -13,9 +14,13 @@ import scheduler.framework.core.annotation.QuartzJob;
 @QuartzJob
 public class ReportJob implements Job {
 
+    @Autowired
+    private ReportService reportService;
+
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void execute(JobExecutionContext jobExecutionContext) {
         JobDataMap data = jobExecutionContext.getMergedJobDataMap();
-        System.out.println("Name job is " + data.get("name"));
+        System.out.println(data.get("name"));
+        reportService.save();
     }
 }
