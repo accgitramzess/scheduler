@@ -1,0 +1,74 @@
+plugins {
+    id 'java'
+    id("de.chkpnt.truststorebuilder") version "0.6.0"
+    id 'org.springframework.boot' version '2.3.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+}
+
+group = 'com.generic-scheduler'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.2'
+    implementation group: 'io.netty', name: 'netty-all', version: '4.1.24.Final'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task buildDbMigrations() {
+
+    ext.applyTemplateParam = { template, param, value ->
+        return template.replaceAll('\\$\\{' + param + '\\}', value.toString())
+    }
+
+    ext.applyTemplateParams = { template, params ->
+        def result = template
+        params.each { name, value ->
+            result = applyTemplateParam(result, name, value)
+        }
+
+        return result
+    }
+
+    ext.joinScripts = { scriptsDir, transformer ->
+        def scripts = files { scriptsDir.listFiles() }
+        return scripts
+                .findAll {it.name.toLowerCase().endsWith('.sql')}
+                .sort()
+                .indexed()
+                .collect(transformer)
+                .join("\n")
+    }
+
+    ext.renderMigrationScripts = {
+        def deployment = file('db/deployment')
+
+        def transactionWrapperTemplate = new File(deployment, 'template/transaction-wrapper.sql').text
+        logger.info('transactionWrapperTemplate = {}', transactionWrapperTemplate)
+        return applyTemplateParams(transactionWrapperTemplate, [
+                'technicalStuff' : joinScripts(new File(deployment, 'ddl'), { i, script -> script.getText() })
+        ])
+    }
+
+    doLast {
+        def dbDir = "${ buildDir }/tmp/db"
+        mkdir(dbDir)
+
+        def resultScript = file("${ dbDir }/migrations.sql")
+        resultScript.text = renderMigrationScripts()
+    }
+}

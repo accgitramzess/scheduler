@@ -1,0 +1,13 @@
+crons:
+  - cron: "* 5 * * * *"
+    event: SYNC_ALLOCATION_DETAILS_EVENT
+    timeOut: 30
+    retry: 5
+  - cron: "* 5 * * * *"
+    event: SYNC_CLOUD_EVENT
+    timeOut: 30
+    retry: 5
+  - cron: "* 5 * * * *"
+    event: SYNC_CHECK_EVENT
+    timeOut: 30
+    retry: 5
